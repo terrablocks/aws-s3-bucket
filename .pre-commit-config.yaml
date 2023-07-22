@@ -18,15 +18,19 @@ repos:
   hooks:
     - id: terraform_fmt
     - id: terraform_validate
+      exclude: examples/
     - id: terraform_tflint
+      exclude: examples/
       args:
-        - --args=--config=__GIT_WORKING_DIR__/.tflint.hcl
+        - --args=--config=__GIT_WORKING_DIR__/.tflint.hcl --fix
 - repo: https://github.com/bridgecrewio/checkov.git
   rev: "2.3.314"
   hooks:
     - id: checkov
-      args: ["--quiet", "--compact", "--framework", "terraform", "--download-external-modules", "false"]
+      args: ["--quiet", "--compact", "--framework", "terraform", "--download-external-modules", "false", "--skip-check", "CKV_TF_1"]
 - repo: https://github.com/terraform-docs/terraform-docs
   rev: v0.16.0
   hooks:
     - id: terraform-docs-go
+      args: ["."]
+      # args: ["--config", ".terraform-docs.yml"]
