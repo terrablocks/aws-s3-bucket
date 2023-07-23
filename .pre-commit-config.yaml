@@ -33,4 +33,3 @@ repos:
   hooks:
     - id: terraform-docs-go
       args: ["."]
-      # args: ["--config", ".terraform-docs.yml"]
