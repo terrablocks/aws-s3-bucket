@@ -34,7 +34,7 @@ jobs:
           download_external_modules: false
           output_format: cli,sarif
           output_file_path: console,results.sarif
-          skip-check: CKV_TF_1
+          skip_path: examples
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v2
 

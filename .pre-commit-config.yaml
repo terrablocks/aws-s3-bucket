@@ -27,7 +27,7 @@ repos:
   rev: "2.3.314"
   hooks:
     - id: checkov
-      args: ["--quiet", "--compact", "--framework", "terraform", "--download-external-modules", "false", "--skip-check", "CKV_TF_1"]
+      args: ["--quiet", "--compact", "--framework", "terraform", "--download-external-modules", "false", "--skip-path", "examples"]
 - repo: https://github.com/terraform-docs/terraform-docs
   rev: v0.16.0
   hooks:
