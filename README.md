@@ -41,7 +41,7 @@ module "s3_bucket" {
 | object_lock_enabled | Whether to enable object lock configuration for the bucket. **Note:** This argument is not supported for all regions or partitions | `bool` | `false` | no |
 | object_ownership | Specify object ownership method. Possible values: BucketOwnerPreferred, ObjectWriter or BucketOwnerEnforced | `string` | `"BucketOwnerEnforced"` | no |
 | restrict_public_buckets | Whether to ignore existing public bucket policy and make the bucket accessible only for owner | `bool` | `true` | no |
-| suspend_versioning | Whether to suspend the bucket versioning | `bool` | `true` | no |
+| suspend_versioning | Whether to suspend the bucket versioning | `bool` | `false` | no |
 | tags | Key Value pair to assign to the S3 bucket | `map(any)` | `{}` | no |
 
 ## Outputs
