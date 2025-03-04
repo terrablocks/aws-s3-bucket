@@ -27,6 +27,12 @@ variable "kms_key" {
   description = "Alias/ARN/ID of KMS key for S3 SSE encryption"
 }
 
+variable "bucket_key_enabled" {
+  type        = bool
+  default     = true
+  description = "Whether to use [Amazon S3 Bucket keys](https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucket-key.html) for rest-side encryption"
+}
+
 variable "block_public_acls" {
   type        = bool
   default     = true
@@ -51,10 +57,10 @@ variable "restrict_public_buckets" {
   description = "Whether to ignore existing public bucket policy and make the bucket accessible only for owner"
 }
 
-variable "policy" {
-  type        = string
-  default     = ""
-  description = "Resource policy to apply to the S3 bucket. Leave it blank to generate one automatically"
+variable "apply_ssl_deny_policy" {
+  type        = bool
+  default     = true
+  description = "Apply the default [SSL deny policy](https://docs.aws.amazon.com/AmazonS3/latest/userguide/example-bucket-policies.html#example-bucket-policies-HTTP-HTTPS) to the S3 bucket. Set this to false if you want to attach your own policy"
 }
 
 variable "tags" {
