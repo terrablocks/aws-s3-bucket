@@ -15,6 +15,18 @@ variable "object_lock_enabled" {
   description = "Whether to enable object lock configuration for the bucket. **Note:** This argument is not supported for all regions or partitions"
 }
 
+variable "disable_versioning" {
+  type        = bool
+  default     = true
+  description = "Whether to disable bucket versioning (should only be used when creating or importing resources that correspond to unversioned S3 buckets)"
+}
+
+variable "suspend_versioning" {
+  type        = bool
+  default     = true
+  description = "Whether to suspend the bucket versioning"
+}
+
 variable "object_ownership" {
   type        = string
   default     = "BucketOwnerEnforced"
@@ -30,7 +42,19 @@ variable "kms_key" {
 variable "bucket_key_enabled" {
   type        = bool
   default     = true
-  description = "Whether to use [Amazon S3 Bucket keys](https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucket-key.html) for rest-side encryption"
+  description = "Whether to enable [bucket level keys](https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucket-key.html) for rest-side encryption"
+}
+
+variable "enable_mfa_delete" {
+  type        = bool
+  default     = false
+  description = "Enable MFA delete for S3 bucket"
+}
+
+variable "mfa" {
+  type        = string
+  default     = null
+  description = "The concatenation of the authentication device's serial number, a space, and the value that is displayed on your authentication device. **Note:** Required only if `enable_mfa_delete` is set to true"
 }
 
 variable "block_public_acls" {
@@ -60,7 +84,7 @@ variable "restrict_public_buckets" {
 variable "apply_ssl_deny_policy" {
   type        = bool
   default     = true
-  description = "Apply the default [SSL deny policy](https://docs.aws.amazon.com/AmazonS3/latest/userguide/example-bucket-policies.html#example-bucket-policies-HTTP-HTTPS) to the S3 bucket. Set this to false if you want to attach your own policy"
+  description = "Apply the default [SSL deny policy](https://docs.aws.amazon.com/AmazonS3/latest/userguide/example-bucket-policies.html#example-bucket-policies-HTTP-HTTPS) to the S3 bucket. **Note:** Set this to false if you want to attach your own policy"
 }
 
 variable "tags" {

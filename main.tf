@@ -13,6 +13,17 @@ resource "aws_s3_bucket" "this" {
   tags                = var.tags
 }
 
+resource "aws_s3_bucket_versioning" "this" {
+  bucket = aws_s3_bucket.this.id
+
+  versioning_configuration {
+    status     = var.disable_versioning ? "Disabled" : (var.suspend_versioning ? "Suspended" : "Enabled")
+    mfa_delete = var.enable_mfa_delete ? "Enabled" : "Disabled"
+  }
+
+  mfa = var.mfa
+}
+
 resource "aws_s3_bucket_ownership_controls" "this" {
   bucket = aws_s3_bucket.this.id
 
