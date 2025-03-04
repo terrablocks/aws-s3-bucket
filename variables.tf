@@ -23,7 +23,7 @@ variable "disable_versioning" {
 
 variable "suspend_versioning" {
   type        = bool
-  default     = true
+  default     = false
   description = "Whether to suspend the bucket versioning"
 }
 
