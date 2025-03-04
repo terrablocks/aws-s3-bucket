@@ -13,6 +13,17 @@ resource "aws_s3_bucket" "this" {
   tags                = var.tags
 }
 
+resource "aws_s3_bucket_versioning" "this" {
+  bucket = aws_s3_bucket.this.id
+
+  versioning_configuration {
+    status     = var.disable_versioning ? "Disabled" : (var.suspend_versioning ? "Suspended" : "Enabled")
+    mfa_delete = var.enable_mfa_delete ? "Enabled" : "Disabled"
+  }
+
+  mfa = var.mfa
+}
+
 resource "aws_s3_bucket_ownership_controls" "this" {
   bucket = aws_s3_bucket.this.id
 
@@ -31,8 +42,10 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
   rule {
     apply_server_side_encryption_by_default {
       sse_algorithm     = var.kms_key == "alias/aws/s3" ? "AES256" : "aws:kms"
-      kms_master_key_id = var.kms_key == "alias/aws/s3" ? null : data.aws_kms_key.this.id
+      kms_master_key_id = var.kms_key == "alias/aws/s3" ? null : data.aws_kms_key.this.arn
     }
+
+    bucket_key_enabled = var.bucket_key_enabled
   }
 }
 
@@ -44,28 +57,30 @@ resource "aws_s3_bucket_public_access_block" "this" {
   restrict_public_buckets = var.restrict_public_buckets
 }
 
-data "aws_iam_policy_document" "bucket_policy" {
-  statement {
-    sid     = "AllowSSLRequestsOnly"
-    effect  = "Deny"
-    actions = ["s3:*"]
-    resources = [
-      aws_s3_bucket.this.arn,
-      "${aws_s3_bucket.this.arn}/*"
-    ]
-    principals {
-      type        = "*"
-      identifiers = ["*"]
-    }
-    condition {
-      test     = "Bool"
-      variable = "aws:SecureTransport"
-      values   = ["false"]
-    }
-  }
-}
-
 resource "aws_s3_bucket_policy" "this" {
+  count  = var.apply_ssl_deny_policy ? 1 : 0
   bucket = aws_s3_bucket.this.id
-  policy = var.policy == "" ? data.aws_iam_policy_document.bucket_policy.json : var.policy
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid       = "AllowSSLRequestsOnly"
+        Effect    = "Deny"
+        Principal = "*"
+        Action    = "s3:*"
+        Resource = [
+          aws_s3_bucket.this.arn,
+          "${aws_s3_bucket.this.arn}/*"
+        ]
+        Condition = {
+          Bool = {
+            "aws:SecureTransport" = "false"
+          }
+          NumericLessThan = {
+            "s3:TlsVersion" = "1.2"
+          }
+        }
+      }
+    ]
+  })
 }
